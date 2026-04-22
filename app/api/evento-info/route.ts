@@ -2,64 +2,59 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/authOptions'
 
-// GET /api/evento-info?url=https://...
-// Busca o nome do evento e lista de cidades para auto-preencher
+function nomeFromSlug(url: string): string {
+  // Pega o slug: /evento/33724/syon-trio-by-douha → "syon-trio-by-douha"
+  const parts = url.split('/')
+  const slug = parts[parts.length - 1] ?? ''
+  // Converte para título: "syon-trio-by-douha" → "Syon Trio by Douha"
+  return slug
+    .split('-')
+    .map((w, i) => {
+      // Palavras conectivas em minúsculo (exceto a primeira)
+      const lower = ['by', 'at', 'de', 'do', 'da', 'no', 'na', 'e', 'em']
+      if (i > 0 && lower.includes(w.toLowerCase())) return w.toLowerCase()
+      return w.charAt(0).toUpperCase() + w.slice(1)
+    })
+    .join(' ')
+}
+
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
   const url = req.nextUrl.searchParams.get('url')
-  const uf = req.nextUrl.searchParams.get('uf') // para buscar cidades
+  if (!url) return NextResponse.json({ error: 'url obrigatória' }, { status: 400 })
 
-  // Busca cidades de um estado
-  if (uf) {
-    try {
-      const res = await fetch('https://www.ingressonacional.com.br/api/paginas/cidades.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Referer': 'https://www.ingressonacional.com.br/',
-          'User-Agent': 'Mozilla/5.0',
-          'Origin': 'https://www.ingressonacional.com.br',
-        },
-        body: JSON.stringify({ estado: uf }),
-      })
-      const data = await res.json()
-      return NextResponse.json({ cidades: Array.isArray(data) ? data : [] })
-    } catch {
-      return NextResponse.json({ cidades: [] })
-    }
-  }
-
-  // Busca nome do evento pela URL
-  if (!url) return NextResponse.json({ error: 'url ou uf obrigatório' }, { status: 400 })
-
-  const match = url.match(/\/evento\/(\d+)/)
+  const match = url.match(/\/evento\/(\d+)\/([^/?]+)/)
   if (!match) return NextResponse.json({ error: 'URL inválida' }, { status: 400 })
 
   const eventoId = match[1]
+  const slugNome = nomeFromSlug(url)
 
+  // Tenta buscar o nome real na API do site
   try {
     const res = await fetch('https://www.ingressonacional.com.br/api/paginas/evento.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Referer': 'https://www.ingressonacional.com.br/',
-        'User-Agent': 'Mozilla/5.0',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json, text/plain, */*',
         'Origin': 'https://www.ingressonacional.com.br',
       },
       body: JSON.stringify({ evento: eventoId }),
+      signal: AbortSignal.timeout(5000),
     })
-    const data = await res.json()
-    const nome = data?.sucesso?.evento?.Nome ?? null
-    return NextResponse.json({ nome, eventoId })
-  } catch {
-    // Fallback: extrai da URL (ex: /evento/33724/syon-trio-by-douha → "Syon Trio by Douha")
-    const slug = url.split('/').pop() ?? ''
-    const nomeFromSlug = slug
-      .split('-')
-      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ')
-    return NextResponse.json({ nome: nomeFromSlug, eventoId })
-  }
+
+    if (res.ok) {
+      const data = await res.json()
+      const nomeAPI = data?.sucesso?.evento?.Nome
+      if (nomeAPI && nomeAPI.length > 2) {
+        return NextResponse.json({ nome: nomeAPI, eventoId })
+      }
+    }
+  } catch { /* usa fallback */ }
+
+  // Fallback: nome do slug
+  return NextResponse.json({ nome: slugNome, eventoId })
 }

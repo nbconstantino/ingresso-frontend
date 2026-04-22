@@ -37,7 +37,7 @@ const ContaSchema = new Schema<IConta>(
     complemento: { type: String, default: '' },
     bairro: { type: String, required: true },
     uf: { type: String, required: true },
-    cidadeId: { type: String, required: true },
+    cidadeId: { type: String, default: '' },
     nomeCidade: { type: String, required: true },
     nascimento: { type: String, required: true },
     sexo: { type: String, enum: ['M', 'F'], required: true },
