@@ -71,3 +71,17 @@ export async function PATCH(req: NextRequest) {
   await Evento.updateOne({ _id: id, userId }, { $set: body })
   return NextResponse.json({ ok: true })
 }
+
+// DELETE /api/eventos?id=xxx
+export async function DELETE(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+  const id = req.nextUrl.searchParams.get('id')
+  if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+
+  await connectDB()
+  const userId = (session.user as { id: string }).id
+  await Evento.deleteOne({ _id: id, userId, status: { $in: ['aguardando', 'finalizado', 'erro'] } })
+  return NextResponse.json({ ok: true })
+}
