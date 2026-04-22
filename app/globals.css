@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 /* Tema escuro (padrão) */
-:root {
-  --bg-primary: #030712;
-  --bg-secondary: #111827;
-  --bg-card: #111827;
+html, html.dark {
+  --bg: #030712;
+  --bg2: #111827;
+  --card: #111827;
   --border: #1f2937;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --text: #f9fafb;
+  --text2: #9ca3af;
+  --text3: #6b7280;
 }
 
 /* Tema claro */
-:root.light {
-  --bg-primary: #f9fafb;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
+html.light {
+  --bg: #f3f4f6;
+  --bg2: #ffffff;
+  --card: #ffffff;
   --border: #e5e7eb;
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #9ca3af;
+  --text: #111827;
+  --text2: #4b5563;
+  --text3: #9ca3af;
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color 0.2s, color 0.2s;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.15s, color 0.15s;
 }

@@ -18,26 +18,17 @@ export default function Navbar() {
     { href: '/qrcodes', label: 'QR Codes' },
   ]
 
-  const navBg = theme === 'light'
-    ? 'bg-white border-gray-200'
-    : 'bg-gray-900 border-gray-800'
-  const linkInactive = theme === 'light'
-    ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-    : 'text-gray-400 hover:text-white hover:bg-gray-800'
-  const themeBtnBg = theme === 'light'
-    ? 'bg-gray-100 hover:bg-gray-200'
-    : 'bg-gray-800 hover:bg-gray-700'
-  const nameColor = theme === 'light' ? 'text-gray-600' : 'text-gray-400'
-
   return (
-    <nav className={`${navBg} border-b px-4 py-3 flex items-center justify-between`}>
+    <nav className="bg-gray-900 dark:bg-gray-900 light:bg-white border-b border-gray-800 dark:border-gray-800 light:border-gray-200 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4">
         <span className="text-orange-500 font-bold text-lg">🎫 IngressoBot</span>
         <div className="flex gap-1 flex-wrap">
           {links.map(l => (
             <Link key={l.href} href={l.href}
               className={`px-3 py-1.5 rounded text-sm transition-colors ${
-                pathname === l.href ? 'bg-orange-500 text-white' : linkInactive
+                pathname === l.href
+                  ? 'bg-orange-500 text-white'
+                  : 'text-gray-400 dark:text-gray-400 hover:text-white hover:bg-gray-800'
               }`}>
               {l.label}
             </Link>
@@ -45,7 +36,7 @@ export default function Navbar() {
           {isAdmin && (
             <Link href="/admin/usuarios"
               className={`px-3 py-1.5 rounded text-sm transition-colors ${
-                pathname.startsWith('/admin') ? 'bg-purple-600 text-white' : linkInactive
+                pathname.startsWith('/admin') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'
               }`}>
               Admin
             </Link>
@@ -53,11 +44,13 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <button onClick={toggle} title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-          className={`w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-colors ${themeBtnBg}`}>
+        <button onClick={toggle}
+          title={theme === 'dark' ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
+          className="w-9 h-9 rounded-lg flex items-center justify-center text-lg bg-gray-800 hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
+          style={theme === 'light' ? { backgroundColor: '#e5e7eb' } : {}}>
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        <span className={`${nameColor} text-sm`}>{user?.name}</span>
+        <span className="text-sm text-gray-400 dark:text-gray-400" style={theme === 'light' ? { color: '#6b7280' } : {}}>{user?.name}</span>
         <button onClick={() => signOut({ callbackUrl: '/login' })}
           className="text-sm text-gray-500 hover:text-red-400 transition-colors">
           Sair

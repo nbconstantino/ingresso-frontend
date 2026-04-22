@@ -5,12 +5,6 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  theme: {
-    extend: {
-      colors: {
-        // Aliases usados nas páginas
-      }
-    }
-  },
+  theme: { extend: {} },
   plugins: [],
 }
