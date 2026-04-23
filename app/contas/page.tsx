@@ -9,7 +9,7 @@ interface Conta { _id: string; nome: string; email: string; telefone: string; no
 const EMPTY = {
   nome: '', email: '', senha: '', cpf: '', telefone: '',
   cep: '', endereco: '', numero: '', complemento: '', bairro: '',
-  uf: '', cidadeId: '', nomeCidade: '', nascimento: '', sexo: 'M',
+  uf: '', nomeCidade: '', nascimento: '', sexo: 'M',
 }
 
 function maskDate(v: string) {
@@ -57,7 +57,7 @@ export default function ContasPage() {
 
   useEffect(() => { if (status === 'authenticated') loadContas() }, [status, loadContas])
 
-  // Auto-preenche endereço pelo CEP usando ViaCEP
+  // Auto-preenche endereço pelo CEP
   useEffect(() => {
     const raw = form.cep.replace(/\D/g, '')
     if (raw.length !== 8) return
@@ -72,7 +72,6 @@ export default function ContasPage() {
             bairro: data.bairro || prev.bairro,
             uf: data.uf || prev.uf,
             nomeCidade: data.nomeCidade || prev.nomeCidade,
-            cidadeId: '',  // será resolvido pelo bot via Playwright
           }))
         }
         setCepLoading(false)
@@ -94,6 +93,16 @@ export default function ContasPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true); setError('')
+
+    // Validação no cliente antes de enviar
+    const required = ['nome','email','senha','cpf','telefone','cep','endereco','numero','bairro','uf','nascimento'] as const
+    const faltando = required.filter(k => !form[k].trim())
+    if (faltando.length > 0) {
+      setError(`Preencha: ${faltando.join(', ')}`)
+      setLoading(false)
+      return
+    }
+
     const res = await fetch('/api/contas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -118,7 +127,7 @@ export default function ContasPage() {
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-white">Contas de Ingresso</h1>
+          <h1 className="text-2xl font-bold t-text">Contas de Ingresso</h1>
           <button onClick={() => { setShowForm(!showForm); setError('') }}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
             {showForm ? 'Cancelar' : '+ Nova Conta'}
@@ -127,27 +136,30 @@ export default function ContasPage() {
 
         {showForm && (
           <form onSubmit={handleSubmit} className="t-card border rounded-xl p-6 mb-6 space-y-4">
-            <h2 className="font-semibold text-white">Nova Conta</h2>
-            <p className="text-gray-400 text-xs">Preencha com os dados cadastrados no Ingresso Nacional. O endereço é preenchido automaticamente pelo CEP.</p>
+            <h2 className="font-semibold t-text">Nova Conta</h2>
+            <p className="t-text2 text-xs">Preencha com os dados cadastrados no Ingresso Nacional. O endereço é preenchido automaticamente pelo CEP.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { name: 'nome', label: 'Nome completo', type: 'text', ph: 'LUCAS DE OLIVEIRA' },
-                { name: 'email', label: 'Email da conta', type: 'email', ph: 'email@email.com' },
-                { name: 'senha', label: 'Senha da conta', type: 'password', ph: '••••••••' },
-                { name: 'cpf', label: 'CPF', type: 'text', ph: '000.000.000-00' },
-                { name: 'telefone', label: 'Telefone', type: 'text', ph: '(44) 99999-9999' },
-                { name: 'nascimento', label: 'Nascimento', type: 'text', ph: 'DD/MM/AAAA' },
+                { name: 'nome',       label: 'Nome completo',     type: 'text',     ph: 'Lucas de Oliveira' },
+                { name: 'email',      label: 'Email da conta',    type: 'email',    ph: 'email@email.com' },
+                { name: 'senha',      label: 'Senha da conta',    type: 'password', ph: '••••••••' },
+                { name: 'cpf',        label: 'CPF',               type: 'text',     ph: '000.000.000-00' },
+                { name: 'telefone',   label: 'Telefone',          type: 'text',     ph: '(44) 99999-9999' },
+                { name: 'nascimento', label: 'Nascimento',        type: 'text',     ph: 'DD/MM/AAAA' },
               ].map(f => (
                 <div key={f.name}>
-                  <label className="block text-sm text-gray-400 mb-1">{f.label}</label>
-                  <input name={f.name} type={f.type} value={form[f.name as keyof typeof form]}
+                  <label className="block text-sm t-text2 mb-1">{f.label}</label>
+                  <input name={f.name} type={f.type}
+                    value={form[f.name as keyof typeof form]}
                     onChange={handleChange} required placeholder={f.ph}
+                    autoComplete={f.type === 'password' ? 'new-password' : 'off'}
                     className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
                 </div>
               ))}
+
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Sexo</label>
+                <label className="block text-sm t-text2 mb-1">Sexo</label>
                 <select name="sexo" value={form.sexo} onChange={handleChange}
                   className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500">
                   <option value="M">Masculino</option>
@@ -158,30 +170,27 @@ export default function ContasPage() {
 
             <hr className="t-border" />
             <div className="flex items-center gap-2">
-              <p className="text-gray-400 text-xs font-medium">Endereço</p>
+              <p className="t-text2 text-xs font-medium">Endereço</p>
               {cepLoading && <span className="text-orange-400 text-xs animate-pulse">Buscando CEP...</span>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">CEP</label>
-                <input name="cep" type="text" value={form.cep} onChange={handleChange} required
-                  placeholder="00000-000"
-                  className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
-              </div>
               {[
-                { name: 'endereco', label: 'Rua/Avenida', ph: 'Preenchido pelo CEP' },
-                { name: 'numero', label: 'Número', ph: '520' },
-                { name: 'complemento', label: 'Complemento (opcional)', ph: 'Apto 10' },
-                { name: 'bairro', label: 'Bairro', ph: 'Preenchido pelo CEP' },
-                { name: 'uf', label: 'UF', ph: 'PR' },
-                { name: 'nomeCidade', label: 'Cidade', ph: 'Preenchida pelo CEP' },
+                { name: 'cep',         label: 'CEP',                        ph: '00000-000',      req: true },
+                { name: 'endereco',    label: 'Rua/Avenida',                ph: 'Preenchido pelo CEP', req: true },
+                { name: 'numero',      label: 'Número',                     ph: '520',            req: true },
+                { name: 'complemento', label: 'Complemento (opcional)',      ph: 'Apto 10',        req: false },
+                { name: 'bairro',      label: 'Bairro',                     ph: 'Preenchido pelo CEP', req: true },
+                { name: 'uf',          label: 'UF (ex: PR)',                 ph: 'PR',             req: true },
+                { name: 'nomeCidade',  label: 'Cidade',                     ph: 'Preenchida pelo CEP', req: true },
               ].map(f => (
                 <div key={f.name}>
-                  <label className="block text-sm text-gray-400 mb-1">{f.label}</label>
-                  <input name={f.name} type="text" value={form[f.name as keyof typeof form]}
-                    onChange={handleChange} required={f.name !== 'complemento'} placeholder={f.ph}
+                  <label className="block text-sm t-text2 mb-1">{f.label}</label>
+                  <input name={f.name} type="text"
+                    value={form[f.name as keyof typeof form]}
+                    onChange={handleChange} required={f.req} placeholder={f.ph}
                     maxLength={f.name === 'uf' ? 2 : undefined}
+                    autoComplete="off"
                     className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
                 </div>
               ))}
@@ -192,6 +201,7 @@ export default function ContasPage() {
             </div>
 
             {error && <p className="text-red-400 text-sm">{error}</p>}
+
             <button type="submit" disabled={loading}
               className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-6 py-2 rounded-lg font-medium transition-colors">
               {loading ? 'Salvando...' : 'Salvar Conta'}
@@ -200,7 +210,7 @@ export default function ContasPage() {
         )}
 
         {contas.length === 0 ? (
-          <div className="text-center py-16 text-gray-500">
+          <div className="text-center py-16 t-text3">
             <div className="text-4xl mb-3">👤</div>
             <p>Nenhuma conta cadastrada ainda.</p>
           </div>
@@ -209,8 +219,8 @@ export default function ContasPage() {
             {contas.map(c => (
               <div key={c._id} className="t-card border rounded-xl px-5 py-4 flex items-center justify-between">
                 <div>
-                  <div className="font-medium text-white">{c.nome}</div>
-                  <div className="text-gray-400 text-sm">{c.email}</div>
+                  <div className="font-medium t-text">{c.nome}</div>
+                  <div className="t-text2 text-sm">{c.email}</div>
                   <div className="t-text3 text-xs mt-0.5">{c.telefone} · {c.nomeCidade}/{c.uf}</div>
                 </div>
                 <button onClick={() => handleDelete(c._id)}

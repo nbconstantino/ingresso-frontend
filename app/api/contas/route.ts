@@ -26,8 +26,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { nome, email, senha, cpf, telefone, cep, endereco, numero, complemento, bairro, uf, cidadeId, nomeCidade, nascimento, sexo } = body
 
-    if (!nome || !email || !senha || !cpf || !telefone || !cep || !endereco || !numero || !bairro || !uf || !cidadeId || !nomeCidade || !nascimento || !sexo) {
-      return NextResponse.json({ error: 'Campos obrigatórios faltando' }, { status: 400 })
+    // Log de diagnóstico — quais campos estão faltando
+    const camposFaltando = Object.entries({ nome, email, senha, cpf, telefone, cep, endereco, numero, bairro, uf, nascimento, sexo })
+      .filter(([, v]) => !v || String(v).trim() === '')
+      .map(([k]) => k)
+    
+    if (camposFaltando.length > 0) {
+      console.error('Campos faltando:', camposFaltando)
+      return NextResponse.json({ error: `Campos obrigatórios faltando: ${camposFaltando.join(', ')}` }, { status: 400 })
     }
 
     await connectDB()
