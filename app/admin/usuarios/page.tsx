@@ -85,10 +85,10 @@ export default function AdminUsuariosPage() {
     setCopied(codigo); setTimeout(() => setCopied(null), 2000)
   }
 
-  if (status === 'loading') return <div className="min-h-screen bg-gray-950" />
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen t-bg">
       <Navbar />
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-6">
@@ -116,7 +116,7 @@ export default function AdminUsuariosPage() {
         {tab === 'usuarios' && (
           <div className="space-y-3">
             {users.map(u => (
-              <div key={u._id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <div key={u._id} className="t-card border rounded-xl p-4">
                 {editando === u._id ? (
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
@@ -169,7 +169,7 @@ export default function AdminUsuariosPage() {
                         <span className={`text-xs px-2 py-0.5 rounded-full ${u.ativo ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}`}>{u.ativo ? 'Ativo' : 'Inativo'}</span>
                       </div>
                       <div className="text-gray-400 text-sm mt-0.5">{u.email}</div>
-                      <div className="text-gray-500 text-xs mt-0.5">Limite: {u.maxQRCodesPerMonth} QR/mês</div>
+                      <div className="t-text3 text-xs mt-0.5">Limite: {u.maxQRCodesPerMonth} QR/mês</div>
                     </div>
                     <div className="flex gap-2">
                       <button onClick={() => startEdit(u)}
@@ -211,7 +211,7 @@ export default function AdminUsuariosPage() {
                         <span className={`text-xs px-2 py-0.5 rounded-full ${c.usado ? 'bg-gray-800 text-gray-400' : 'bg-green-900 text-green-300'}`}>
                           {c.usado ? 'Usado' : 'Disponível'}
                         </span>
-                        <div className="text-gray-500 text-xs mt-0.5">
+                        <div className="t-text3 text-xs mt-0.5">
                           Expira: {new Date(c.expiresAt).toLocaleDateString('pt-BR')}
                         </div>
                       </div>

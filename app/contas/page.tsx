@@ -111,10 +111,10 @@ export default function ContasPage() {
     loadContas()
   }
 
-  if (status === 'loading') return <div className="min-h-screen bg-gray-950" />
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen t-bg">
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
@@ -126,7 +126,7 @@ export default function ContasPage() {
         </div>
 
         {showForm && (
-          <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6 space-y-4">
+          <form onSubmit={handleSubmit} className="t-card border rounded-xl p-6 mb-6 space-y-4">
             <h2 className="font-semibold text-white">Nova Conta</h2>
             <p className="text-gray-400 text-xs">Preencha com os dados cadastrados no Ingresso Nacional. O endereço é preenchido automaticamente pelo CEP.</p>
 
@@ -143,20 +143,20 @@ export default function ContasPage() {
                   <label className="block text-sm text-gray-400 mb-1">{f.label}</label>
                   <input name={f.name} type={f.type} value={form[f.name as keyof typeof form]}
                     onChange={handleChange} required placeholder={f.ph}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
+                    className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
                 </div>
               ))}
               <div>
                 <label className="block text-sm text-gray-400 mb-1">Sexo</label>
                 <select name="sexo" value={form.sexo} onChange={handleChange}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500">
+                  className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500">
                   <option value="M">Masculino</option>
                   <option value="F">Feminino</option>
                 </select>
               </div>
             </div>
 
-            <hr className="border-gray-800" />
+            <hr className="t-border" />
             <div className="flex items-center gap-2">
               <p className="text-gray-400 text-xs font-medium">Endereço</p>
               {cepLoading && <span className="text-orange-400 text-xs animate-pulse">Buscando CEP...</span>}
@@ -167,7 +167,7 @@ export default function ContasPage() {
                 <label className="block text-sm text-gray-400 mb-1">CEP</label>
                 <input name="cep" type="text" value={form.cep} onChange={handleChange} required
                   placeholder="00000-000"
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
+                  className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
               </div>
               {[
                 { name: 'endereco', label: 'Rua/Avenida', ph: 'Preenchido pelo CEP' },
@@ -182,7 +182,7 @@ export default function ContasPage() {
                   <input name={f.name} type="text" value={form[f.name as keyof typeof form]}
                     onChange={handleChange} required={f.name !== 'complemento'} placeholder={f.ph}
                     maxLength={f.name === 'uf' ? 2 : undefined}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
+                    className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
                 </div>
               ))}
             </div>
@@ -207,11 +207,11 @@ export default function ContasPage() {
         ) : (
           <div className="space-y-3">
             {contas.map(c => (
-              <div key={c._id} className="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex items-center justify-between">
+              <div key={c._id} className="t-card border rounded-xl px-5 py-4 flex items-center justify-between">
                 <div>
                   <div className="font-medium text-white">{c.nome}</div>
                   <div className="text-gray-400 text-sm">{c.email}</div>
-                  <div className="text-gray-500 text-xs mt-0.5">{c.telefone} · {c.nomeCidade}/{c.uf}</div>
+                  <div className="t-text3 text-xs mt-0.5">{c.telefone} · {c.nomeCidade}/{c.uf}</div>
                 </div>
                 <button onClick={() => handleDelete(c._id)}
                   className="text-red-400 hover:text-red-300 text-sm transition-colors ml-4">Remover</button>

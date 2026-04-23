@@ -140,10 +140,10 @@ export default function EventosPage() {
     return acc
   }, {} as Record<string, number>)
 
-  if (status === 'loading') return <div className="min-h-screen bg-gray-950" />
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen t-bg">
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-4">
@@ -184,33 +184,33 @@ export default function EventosPage() {
 
         {/* Formulário novo evento */}
         {showForm && (
-          <form onSubmit={handleCriar} className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6 space-y-5">
+          <form onSubmit={handleCriar} className="t-card border rounded-xl p-6 mb-6 space-y-5">
             <h2 className="font-semibold text-white">Configurar Evento</h2>
             <div>
               <label className="block text-sm text-gray-400 mb-1">URL do evento</label>
               <input type="url" value={url} onChange={e => setUrl(e.target.value)} required
                 placeholder="https://www.ingressonacional.com.br/evento/33724/..."
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
+                className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">
-                Nome do evento {nomeLoading && <span className="text-gray-500 text-xs ml-1">detectando...</span>}
+                Nome do evento {nomeLoading && <span className="t-text3 text-xs ml-1">detectando...</span>}
               </label>
               <input type="text" value={nome} onChange={e => setNome(e.target.value)}
                 placeholder="Detectado automaticamente"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
+                className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500 placeholder-gray-600" />
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">Data/hora de liberação (opcional)</label>
               <input type="datetime-local" value={dataLiberacao} onChange={e => setDataLiberacao(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-orange-500" />
+                className="w-full t-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-orange-500" />
             </div>
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="text-sm text-gray-400">Contas</label>
                 <div className="flex items-center gap-2">
                   <select value={tipoGlobal} onChange={e => setTipoGlobal(e.target.value as 'entrada' | 'geral')}
-                    className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white text-xs">
+                    className="t-input rounded px-2 py-1 text-xs">
                     <option value="entrada">Com horário limite</option>
                     <option value="geral">Ingresso Geral</option>
                   </select>
@@ -221,7 +221,7 @@ export default function EventosPage() {
                 </div>
               </div>
               {contas.length === 0 ? (
-                <p className="text-gray-500 text-sm">Nenhuma conta. <a href="/contas" className="text-orange-400 hover:underline">Cadastrar</a></p>
+                <p className="t-text3 text-sm">Nenhuma conta. <a href="/contas" className="text-orange-400 hover:underline">Cadastrar</a></p>
               ) : (
                 <div className="space-y-2">
                   {contas.map(c => {
@@ -274,7 +274,7 @@ export default function EventosPage() {
             {eventosFiltrados.map(ev => {
               const st = STATUS[ev.status] ?? { label: ev.status, color: 'text-gray-400', dot: 'bg-gray-400' }
               return (
-                <div key={ev._id} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <div key={ev._id} className="t-card border rounded-xl p-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -282,7 +282,7 @@ export default function EventosPage() {
                         <span className={`text-xs font-medium ${st.color}`}>{st.label}</span>
                       </div>
                       <div className="font-semibold text-white">{ev.nome}</div>
-                      <div className="text-gray-500 text-xs mt-0.5 truncate">{ev.url}</div>
+                      <div className="t-text3 text-xs mt-0.5 truncate">{ev.url}</div>
                       <div className="text-gray-400 text-xs mt-1">{ev.contasSelecionadas.length} conta(s)</div>
                     </div>
 

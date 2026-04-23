@@ -63,10 +63,10 @@ function LogsContent() {
   const contadores = { INFO: 0, SUCESSO: 0, AVISO: 0, ERRO: 0 }
   logs.forEach(l => { if (l.nivel in contadores) contadores[l.nivel as keyof typeof contadores]++ })
 
-  if (status === 'loading') return <div className="min-h-screen bg-gray-950" />
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen t-bg">
       <Navbar />
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-6">
@@ -93,8 +93,8 @@ function LogsContent() {
         </div>
 
         {/* Terminal de logs */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
+        <div className="t-card border rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2 t-bg2 border-b t-border">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-red-500" />
               <div className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -141,7 +141,7 @@ function LogsContent() {
 
 export default function LogsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-950" />}>
+    <Suspense fallback={<div className="min-h-screen t-bg" />}>
       <LogsContent />
     </Suspense>
   )

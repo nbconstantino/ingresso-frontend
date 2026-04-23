@@ -48,10 +48,10 @@ export default function RelatoriosPage() {
   const totalQR = usuarios.reduce((s, u) => s + u.totalGeral, 0)
   const totalPagos = usuarios.reduce((s, u) => s + u.pagosGeral, 0)
 
-  if (status === 'loading') return <div className="min-h-screen bg-gray-950" />
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen t-bg">
       <Navbar />
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-6 flex-wrap">
@@ -66,7 +66,7 @@ export default function RelatoriosPage() {
             { label: 'QR Codes pagos', value: totalPagos, color: 'text-green-400' },
             { label: 'Taxa de pagamento', value: totalQR ? `${Math.round(totalPagos/totalQR*100)}%` : '—', color: 'text-blue-400' },
           ].map(s => (
-            <div key={s.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
+            <div key={s.label} className="t-card border rounded-xl p-4 text-center">
               <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
               <div className="text-gray-400 text-sm mt-1">{s.label}</div>
             </div>
@@ -100,7 +100,7 @@ export default function RelatoriosPage() {
             {usuarios.length === 0 ? (
               <p className="text-center py-12 text-gray-500">Nenhum dado para este período.</p>
             ) : usuarios.map(u => (
-              <div key={u._id} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+              <div key={u._id} className="t-card border rounded-xl overflow-hidden">
                 {/* Header do usuário */}
                 <button onClick={() => setExpandido(expandido === u._id ? null : u._id)}
                   className="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
@@ -111,19 +111,19 @@ export default function RelatoriosPage() {
                   <div className="flex items-center gap-6">
                     <div className="text-right">
                       <div className="text-orange-400 font-bold text-lg">{u.totalGeral}</div>
-                      <div className="text-gray-500 text-xs">QR Codes</div>
+                      <div className="t-text3 text-xs">QR Codes</div>
                     </div>
                     <div className="text-right">
                       <div className="text-green-400 font-bold text-lg">{u.pagosGeral}</div>
-                      <div className="text-gray-500 text-xs">Pagos</div>
+                      <div className="t-text3 text-xs">Pagos</div>
                     </div>
                     <div className="text-right">
                       <div className="text-blue-400 font-bold text-lg">
                         {u.totalGeral ? `${Math.round(u.pagosGeral/u.totalGeral*100)}%` : '—'}
                       </div>
-                      <div className="text-gray-500 text-xs">Taxa</div>
+                      <div className="t-text3 text-xs">Taxa</div>
                     </div>
-                    <span className="text-gray-500 text-sm">{expandido === u._id ? '▲' : '▼'}</span>
+                    <span className="t-text3 text-sm">{expandido === u._id ? '▲' : '▼'}</span>
                   </div>
                 </button>
 
@@ -169,25 +169,25 @@ export default function RelatoriosPage() {
             {eventos.length === 0 ? (
               <p className="text-center py-12 text-gray-500">Nenhum dado para este período.</p>
             ) : eventos.map(ev => (
-              <div key={ev._id} className="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex items-center justify-between">
+              <div key={ev._id} className="t-card border rounded-xl px-5 py-4 flex items-center justify-between">
                 <div className="flex-1 min-w-0 mr-4">
                   <div className="text-white font-medium truncate">{ev.nomeEvento}</div>
-                  <div className="text-gray-500 text-xs mt-0.5">{ev.numUsuarios} usuário(s)</div>
+                  <div className="t-text3 text-xs mt-0.5">{ev.numUsuarios} usuário(s)</div>
                 </div>
                 <div className="flex items-center gap-6 shrink-0">
                   <div className="text-center">
                     <div className="text-orange-400 font-bold">{ev.total}</div>
-                    <div className="text-gray-500 text-xs">Total</div>
+                    <div className="t-text3 text-xs">Total</div>
                   </div>
                   <div className="text-center">
                     <div className="text-green-400 font-bold">{ev.pagos}</div>
-                    <div className="text-gray-500 text-xs">Pagos</div>
+                    <div className="t-text3 text-xs">Pagos</div>
                   </div>
                   <div className="text-center">
                     <div className="text-blue-400 font-bold">
                       {ev.total ? `${Math.round(ev.pagos/ev.total*100)}%` : '—'}
                     </div>
-                    <div className="text-gray-500 text-xs">Taxa</div>
+                    <div className="t-text3 text-xs">Taxa</div>
                   </div>
                 </div>
               </div>

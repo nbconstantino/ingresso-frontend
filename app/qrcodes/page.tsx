@@ -56,10 +56,10 @@ export default function QRCodesPage() {
   const pendentes = qrcodes.filter(q => q.status === 'pendente').length
   const pagos = qrcodes.filter(q => q.status === 'pago').length
 
-  if (status === 'loading') return <div className="min-h-screen bg-gray-950" />
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen t-bg">
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
@@ -133,7 +133,7 @@ export default function QRCodesPage() {
                   </div>
                 ) : (
                   <div className="bg-gray-800 rounded-lg h-40 flex items-center justify-center mb-3">
-                    <span className="text-gray-500 text-sm">QR Code não disponível</span>
+                    <span className="t-text3 text-sm">QR Code não disponível</span>
                   </div>
                 )}
 
