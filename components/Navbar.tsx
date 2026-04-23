@@ -13,44 +13,47 @@ export default function Navbar() {
 
   const links = [
     { href: '/dashboard', label: 'Dashboard' },
-    { href: '/contas', label: 'Contas' },
-    { href: '/eventos', label: 'Eventos' },
-    { href: '/qrcodes', label: 'QR Codes' },
+    { href: '/contas',    label: 'Contas' },
+    { href: '/eventos',   label: 'Eventos' },
+    { href: '/qrcodes',   label: 'QR Codes' },
+  ]
+  const adminLinks = [
+    { href: '/admin/usuarios',  label: 'Usuários' },
+    { href: '/admin/relatorios',label: 'Relatórios' },
+    { href: '/admin/atividade', label: 'Atividade' },
+    { href: '/logs',            label: 'Logs' },
   ]
 
   return (
-    <nav className="t-nav border-b px-4 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <span className="text-orange-500 font-bold text-lg">🎫 IngressoBot</span>
-        <div className="flex gap-1 flex-wrap">
-          {links.map(l => (
-            <Link key={l.href} href={l.href}
-              className={`px-3 py-1.5 rounded text-sm transition-colors ${
-                pathname === l.href ? 'bg-orange-500 text-white' : 't-link t-hover'
-              }`}>
-              {l.label}
-            </Link>
-          ))}
-          {isAdmin && (
-            <Link href="/admin/usuarios"
-              className={`px-3 py-1.5 rounded text-sm transition-colors ${
-                pathname.startsWith('/admin') ? 'bg-purple-600 text-white' : 't-link t-hover'
-              }`}>
-              Admin
-            </Link>
-          )}
-        </div>
+    <nav className="t-nav border-b sticky top-0 z-30 px-4 py-3 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-1 flex-wrap min-w-0">
+        <span className="text-orange-500 font-bold mr-3 shrink-0">🎫 IngressoBot</span>
+        {links.map(l => (
+          <Link key={l.href} href={l.href}
+            className={`px-3 py-1.5 rounded text-sm transition-colors whitespace-nowrap ${
+              pathname === l.href ? 'bg-orange-500 text-white' : 't-link t-hover'
+            }`}>
+            {l.label}
+          </Link>
+        ))}
+        {isAdmin && adminLinks.map(l => (
+          <Link key={l.href} href={l.href}
+            className={`px-3 py-1.5 rounded text-sm transition-colors whitespace-nowrap ${
+              pathname === l.href ? 'bg-purple-600 text-white' : 't-link t-hover'
+            }`}>
+            {l.label}
+          </Link>
+        ))}
       </div>
-      <div className="flex items-center gap-3">
-        <button onClick={toggle} title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
-          className="w-9 h-9 rounded-lg flex items-center justify-center text-lg t-card border transition-colors t-hover">
+      <div className="flex items-center gap-3 shrink-0">
+        <button onClick={toggle}
+          title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
+          className="w-9 h-9 rounded-lg flex items-center justify-center text-base t-card t-border border transition-colors t-hover">
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        <span className="text-sm t-text2">{user?.name}</span>
+        <span className="text-sm t-text2 hidden sm:block">{user?.name}</span>
         <button onClick={() => signOut({ callbackUrl: '/login' })}
-          className="text-sm t-text3 hover:text-red-400 transition-colors">
-          Sair
-        </button>
+          className="text-sm t-text3 hover:text-red-400 transition-colors">Sair</button>
       </div>
     </nav>
   )

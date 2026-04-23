@@ -2,53 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Variáveis de tema ─────────────────────────────────────────────────────── */
+/* ── Variáveis do tema escuro (padrão) ───────────────────────────────────── */
 :root {
-  --bg:      #030712;
-  --bg2:     #111827;
-  --card:    #111827;
-  --border:  #1f2937;
-  --text:    #f9fafb;
-  --text2:   #9ca3af;
-  --text3:   #6b7280;
-  --input:   #1f2937;
-  --hover:   #1f2937;
-  --nav:     #111827;
+  --bg:         #030712;
+  --bg2:        #111827;
+  --card:       #111827;
+  --border:     #1f2937;
+  --text:       #f9fafb;
+  --text2:      #9ca3af;
+  --text3:      #6b7280;
+  --input-bg:   #1f2937;
+  --hover:      rgba(255,255,255,0.04);
+  --nav:        #111827;
   --nav-border: #1f2937;
 }
 
+/* ── Variáveis do tema claro ─────────────────────────────────────────────── */
 :root.light {
-  --bg:      #f3f4f6;
-  --bg2:     #ffffff;
-  --card:    #ffffff;
-  --border:  #e5e7eb;
-  --text:    #111827;
-  --text2:   #4b5563;
-  --text3:   #9ca3af;
-  --input:   #f9fafb;
-  --hover:   #f3f4f6;
-  --nav:     #ffffff;
-  --nav-border: #e5e7eb;
+  --bg:         #f1f5f9;
+  --bg2:        #ffffff;
+  --card:       #ffffff;
+  --border:     #e2e8f0;
+  --text:       #0f172a;
+  --text2:      #475569;
+  --text3:      #94a3b8;
+  --input-bg:   #f8fafc;
+  --hover:      rgba(0,0,0,0.04);
+  --nav:        #ffffff;
+  --nav-border: #e2e8f0;
 }
 
-/* ── Reset base ────────────────────────────────────────────────────────────── */
-body {
-  background-color: var(--bg);
-  color: var(--text);
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
+/* ── Base ────────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html { transition: background-color 0.15s ease; }
+body { background-color: var(--bg); color: var(--text); min-height: 100vh; }
 
-/* ── Componentes temáticos ─────────────────────────────────────────────────── */
-.t-nav     { background-color: var(--nav); border-color: var(--nav-border); }
-.t-bg      { background-color: var(--bg); }
-.t-bg2     { background-color: var(--bg2); }
-.t-card    { background-color: var(--card); border-color: var(--border); }
-.t-text    { color: var(--text); }
-.t-text2   { color: var(--text2); }
-.t-text3   { color: var(--text3); }
-.t-border  { border-color: var(--border); }
-.t-input   { background-color: var(--input); border-color: var(--border); color: var(--text); }
-.t-input:focus { border-color: #f97316; outline: none; }
-.t-hover:hover { background-color: var(--hover); }
-.t-link    { color: var(--text2); }
-.t-link:hover { color: var(--text); background-color: var(--hover); }
+/* ── Classes utilitárias de tema ─────────────────────────────────────────── */
+.t-bg      { background-color: var(--bg) !important; }
+.t-bg2     { background-color: var(--bg2) !important; }
+.t-card    { background-color: var(--card) !important; }
+.t-border  { border-color: var(--border) !important; }
+.t-text    { color: var(--text) !important; }
+.t-text2   { color: var(--text2) !important; }
+.t-text3   { color: var(--text3) !important; }
+.t-hover:hover { background-color: var(--hover) !important; }
+.t-nav     { background-color: var(--nav) !important; border-color: var(--nav-border) !important; }
+.t-input   {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+.t-input::placeholder { color: var(--text3) !important; }
+.t-input:focus { border-color: #f97316 !important; outline: none !important; }
+
+/* Garante que selects e textareas herdem o tema */
+.t-input option { background-color: var(--card); color: var(--text); }
+
+/* Link de navegação */
+.t-link    { color: var(--text2) !important; }
+.t-link:hover { color: var(--text) !important; background-color: var(--hover) !important; }
+
+/* Divisor */
+.t-divide > * + * { border-top: 1px solid var(--border); }

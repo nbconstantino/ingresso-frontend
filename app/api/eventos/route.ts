@@ -1,3 +1,4 @@
+import { registrarAtividade } from '@/lib/atividade'
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/authOptions'
@@ -49,6 +50,8 @@ export async function POST(req: NextRequest) {
       status: 'aguardando',
     })
 
+    const uSession = session.user as { name?: string }
+    await registrarAtividade(userId, uSession.name ?? '', 'criar_evento', `Evento: ${nome || eventoId}`)
     return NextResponse.json({ ok: true, id: evento._id, eventoId })
   } catch (err) {
     console.error(err)

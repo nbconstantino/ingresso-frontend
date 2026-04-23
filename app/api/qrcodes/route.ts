@@ -9,12 +9,15 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-  const eventoId = req.nextUrl.searchParams.get('eventoId')
+  const eventoIdFilter = req.nextUrl.searchParams.get('eventoId')
   await connectDB()
-  const userId = (session.user as { id: string }).id
+  const userId = (session.user as { id: string; role?: string }).id
+  const role = (session.user as { role?: string }).role
 
-  const query = eventoId ? { userId, eventoId } : { userId }
-  const qrcodes = await QRCode.find(query).sort({ createdAt: -1 }).lean()
+  // Admin pode ver todos, usuário vê só os seus
+  const baseQuery: Record<string, unknown> = role === 'admin' ? {} : { userId }
+  if (eventoIdFilter) baseQuery.eventoId = eventoIdFilter
+  const qrcodes = await QRCode.find(baseQuery).sort({ createdAt: -1 }).lean()
 
   return NextResponse.json(qrcodes)
 }
@@ -29,7 +32,9 @@ export async function PATCH(req: NextRequest) {
 
   await connectDB()
   const userId = (session.user as { id: string }).id
-  await QRCode.updateOne({ _id: id, userId }, { status: 'pago' })
+  const { status: newStatus } = await req.json().catch(() => ({ status: 'pago' }))
+  const validStatus = ['pago', 'expirado'].includes(newStatus) ? newStatus : 'pago'
+  await QRCode.updateOne({ _id: id, userId }, { status: validStatus })
 
   return NextResponse.json({ ok: true })
 }

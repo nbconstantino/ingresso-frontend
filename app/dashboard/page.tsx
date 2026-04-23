@@ -10,66 +10,62 @@ export default function DashboardPage() {
   const router = useRouter()
   const [stats, setStats] = useState({ contas: 0, eventos: 0, qrcodes: 0, pagos: 0 })
 
-  useEffect(() => {
-    if (status === 'unauthenticated') router.push('/login')
-  }, [status, router])
+  useEffect(() => { if (status === 'unauthenticated') router.push('/login') }, [status, router])
 
   useEffect(() => {
     if (status !== 'authenticated') return
     Promise.all([
-      fetch('/api/contas').then((r) => r.json()),
-      fetch('/api/eventos').then((r) => r.json()),
-      fetch('/api/qrcodes').then((r) => r.json()),
-    ]).then(([contas, eventos, qrcodes]) => {
-      setStats({
-        contas: Array.isArray(contas) ? contas.length : 0,
-        eventos: Array.isArray(eventos) ? eventos.length : 0,
-        qrcodes: Array.isArray(qrcodes) ? qrcodes.length : 0,
-        pagos: Array.isArray(qrcodes) ? qrcodes.filter((q: { status: string }) => q.status === 'pago').length : 0,
-      })
-    })
+      fetch('/api/contas').then(r => r.json()),
+      fetch('/api/eventos').then(r => r.json()),
+      fetch('/api/qrcodes').then(r => r.json()),
+    ]).then(([c, e, q]) => {
+      const contas = Array.isArray(c) ? c.length : 0
+      const eventos = Array.isArray(e) ? e.length : 0
+      const qrcodes = Array.isArray(q) ? q.length : 0
+      const pagos = Array.isArray(q) ? q.filter((x: { status: string }) => x.status === 'pago').length : 0
+      setStats({ contas, eventos, qrcodes, pagos })
+    }).catch(() => {})
   }, [status])
 
-  if (status === 'loading') return <div className="min-h-screen t-bg flex items-center justify-center t-text2">Carregando...</div>
+  const user = session?.user as { name?: string; role?: string } | undefined
+
+  if (status === 'loading') return <div className="min-h-screen t-bg" />
 
   return (
     <div className="min-h-screen t-bg">
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-white mb-2">
-          Olá, {session?.user?.name} 👋
-        </h1>
-        <p className="t-text2 mb-8">Painel de controle do IngressoBot</p>
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold t-text">Olá, {user?.name?.split(' ')[0]} 👋</h1>
+          <p className="t-text2 mt-1">Painel de controle do IngressoBot</p>
+        </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Contas cadastradas', value: stats.contas, color: 'blue' },
-            { label: 'Eventos configurados', value: stats.eventos, color: 'purple' },
-            { label: 'QR Codes gerados', value: stats.qrcodes, color: 'orange' },
-            { label: 'QR Codes pagos', value: stats.pagos, color: 'green' },
-          ].map((s) => (
+            { label: 'Contas cadastradas', value: stats.contas, color: 'text-orange-400' },
+            { label: 'Eventos configurados', value: stats.eventos, color: 'text-blue-400' },
+            { label: 'QR Codes gerados', value: stats.qrcodes, color: 'text-purple-400' },
+            { label: 'QR Codes pagos', value: stats.pagos, color: 'text-green-400' },
+          ].map(s => (
             <div key={s.label} className="t-card border rounded-xl p-4">
-              <div className={`text-3xl font-bold text-${s.color}-400`}>{s.value}</div>
+              <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
               <div className="t-text2 text-sm mt-1">{s.label}</div>
             </div>
           ))}
         </div>
 
-        <h2 className="text-lg font-semibold text-white mb-4">Acesso rápido</h2>
+        <h2 className="text-lg font-semibold t-text mb-4">Acesso rápido</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { href: '/contas', icon: '👤', title: 'Gerenciar Contas', desc: 'Cadastre as contas do Ingresso Nacional' },
-            { href: '/eventos', icon: '🎟️', title: 'Configurar Evento', desc: 'Cole a URL do evento e selecione as contas' },
-            { href: '/qrcodes', icon: '📱', title: 'Ver QR Codes', desc: 'Acompanhe os QR Codes Pix gerados' },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="t-card border hover:border-orange-500 rounded-xl p-5 transition-colors group"
-            >
-              <div className="text-3xl mb-3">{item.icon}</div>
-              <div className="font-semibold text-white group-hover:text-orange-400 transition-colors">{item.title}</div>
-              <div className="t-text3 text-sm mt-1">{item.desc}</div>
+            { href: '/contas', icone: '👤', titulo: 'Gerenciar Contas', desc: 'Cadastre as contas do Ingresso Nacional' },
+            { href: '/eventos', icone: '🎟️', titulo: 'Configurar Evento', desc: 'Cole a URL do evento e selecione as contas' },
+            { href: '/qrcodes?status=pendente', icone: '📱', titulo: 'Ver QR Codes', desc: 'Acompanhe os QR Codes Pix gerados' },
+          ].map(item => (
+            <Link key={item.href} href={item.href}
+              className="t-card border rounded-xl p-5 hover:border-orange-500 transition-colors group block">
+              <div className="text-3xl mb-3">{item.icone}</div>
+              <div className="font-semibold t-text group-hover:text-orange-400 transition-colors">{item.titulo}</div>
+              <div className="t-text2 text-sm mt-1">{item.desc}</div>
             </Link>
           ))}
         </div>

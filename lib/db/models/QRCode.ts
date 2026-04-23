@@ -7,8 +7,9 @@ export interface IQRCode extends Document {
   nomeEvento: string
   nomeConta: string
   imagemBase64: string       // screenshot do QR Code em base64
-  pixCopiaCola: string       // código copia-e-cola
-  status: 'pendente' | 'pago'
+  pixCopiaCola: string
+  expiresAt?: Date       // código copia-e-cola
+  status: 'pendente' | 'pago' | 'expirado' | 'expirado'
   createdAt: Date
 }
 
@@ -21,7 +22,8 @@ const QRCodeSchema = new Schema<IQRCode>(
     nomeConta: { type: String, required: true },
     imagemBase64: { type: String, required: true },
     pixCopiaCola: { type: String, default: '' },
-    status: { type: String, enum: ['pendente', 'pago'], default: 'pendente' },
+    status: { type: String, enum: ['pendente', 'pago', 'expirado'], default: 'pendente' },
+  expiresAt: { type: Date },  // 5 minutos após criação
   },
   { timestamps: true }
 )
