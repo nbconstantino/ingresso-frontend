@@ -1,24 +1,30 @@
-'use client'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { SessionProvider } from 'next-auth/react'
-import { ThemeProvider } from '@/components/ThemeProvider'
+import { Providers } from './providers'
+
+export const metadata: Metadata = {
+  title: 'IngressoBot',
+  description: 'Bot de compra automática de ingressos',
+  manifest: '/manifest.json',
+  appleWebApp: { capable: true, statusBarStyle: 'default', title: 'IngressoBot' },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,   // ← sem zoom ao focar input
+  userScalable: false,
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)',  color: '#111827' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+  ],
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className="dark">
-      <head>
-        <title>IngressoBot</title>
-        <meta name="description" content="Automacao de compra de ingressos" />
-        <script dangerouslySetInnerHTML={{
-          __html: `try{const t=localStorage.getItem('theme')||'dark';document.documentElement.className=t==='light'?'light':'dark'}catch(e){}`
-        }} />
-      </head>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body>
-        <SessionProvider>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

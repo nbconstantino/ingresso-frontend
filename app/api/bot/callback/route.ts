@@ -3,7 +3,6 @@ import { connectDB } from '@/lib/db/connect'
 import QRCode from '@/lib/db/models/QRCode'
 import Evento from '@/lib/db/models/Evento'
 
-// Rota chamada pelo bot no Render para salvar QR Codes
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-bot-secret')
   if (secret !== process.env.BOT_SECRET) {
@@ -17,33 +16,36 @@ export async function POST(req: NextRequest) {
     await connectDB()
 
     if (type === 'qrcodes') {
-      // Salva os QR Codes gerados pelo bot
       const docs = qrcodes.map((q: {
-        contaId: string
-        nomeConta: string
-        nomeEvento: string
-        imagemBase64: string
-        pixCopiaCola: string
-      }) => ({
-        eventoId: eventoMongoId,
-        contaId: q.contaId,
-        userId,
-        nomeEvento: q.nomeEvento,
-        nomeConta: q.nomeConta,
-        imagemBase64: q.imagemBase64,
-        pixCopiaCola: q.pixCopiaCola,
-        status: 'pendente',
-      }))
+        contaId: string; nomeConta: string; nomeEvento: string
+        imagemBase64: string; pixCopiaCola: string; erro?: string
+        qrGeradoEm?: number  // timestamp ms do momento exato da geração
+      }) => {
+        // Usa o timestamp exato do bot; fallback para agora
+        const geradoEm = q.qrGeradoEm ? new Date(q.qrGeradoEm) : new Date()
+        const expiresAt = new Date(geradoEm.getTime() + 5 * 60 * 1000) // +5min exatos
+        return {
+          eventoId: eventoMongoId,
+          contaId: q.contaId,
+          userId,
+          nomeEvento: q.nomeEvento,
+          nomeConta: q.nomeConta,
+          imagemBase64: q.imagemBase64 ?? '',
+          pixCopiaCola: q.pixCopiaCola ?? '',
+          status: q.erro ? 'pendente' : 'pendente',
+          qrGeradoEm: geradoEm,
+          expiresAt,
+          erro: q.erro,
+        }
+      })
 
       await QRCode.insertMany(docs)
       await Evento.updateOne({ _id: eventoMongoId }, { status: 'finalizado' })
-
       return NextResponse.json({ ok: true })
     }
 
     if (type === 'erro') {
       await Evento.updateOne({ _id: eventoMongoId }, { status: 'erro' })
-      console.error(`[BOT] Erro no evento ${eventoMongoId}:`, erro)
       return NextResponse.json({ ok: true })
     }
 

@@ -2,65 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Variáveis do tema escuro (padrão) ───────────────────────────────────── */
+/* ── Viewport: sem zoom no mobile ─────────────────────────────────────────── */
+@layer base {
+  input, textarea, select {
+    font-size: 16px !important; /* iOS não faz zoom acima de 16px */
+  }
+}
+
+/* ── Variáveis de tema ────────────────────────────────────────────────────── */
 :root {
-  --bg:         #030712;
-  --bg2:        #111827;
-  --card:       #111827;
-  --border:     #1f2937;
-  --text:       #f9fafb;
-  --text2:      #9ca3af;
-  --text3:      #6b7280;
-  --input-bg:   #1f2937;
-  --hover:      rgba(255,255,255,0.04);
-  --nav:        #111827;
-  --nav-border: #1f2937;
+  --bg:       #030712;
+  --bg2:      #111827;
+  --card:     #111827;
+  --border:   #1f2937;
+  --text:     #f9fafb;
+  --text2:    #9ca3af;
+  --text3:    #6b7280;
+  --inp:      #1f2937;
+  --hover:    rgba(255,255,255,0.04);
+  --nav:      #111827;
+  --nav-b:    #1f2937;
+  --shadow:   0 4px 24px rgba(0,0,0,0.4);
 }
-
-/* ── Variáveis do tema claro ─────────────────────────────────────────────── */
 :root.light {
-  --bg:         #f1f5f9;
-  --bg2:        #ffffff;
-  --card:       #ffffff;
-  --border:     #e2e8f0;
-  --text:       #0f172a;
-  --text2:      #475569;
-  --text3:      #94a3b8;
-  --input-bg:   #f8fafc;
-  --hover:      rgba(0,0,0,0.04);
-  --nav:        #ffffff;
-  --nav-border: #e2e8f0;
+  --bg:       #f1f5f9;
+  --bg2:      #ffffff;
+  --card:     #ffffff;
+  --border:   #e2e8f0;
+  --text:     #0f172a;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --inp:      #f8fafc;
+  --hover:    rgba(0,0,0,0.04);
+  --nav:      #ffffff;
+  --nav-b:    #e2e8f0;
+  --shadow:   0 4px 24px rgba(0,0,0,0.08);
 }
 
-/* ── Base ────────────────────────────────────────────────────────────────── */
-* { box-sizing: border-box; }
-html { transition: background-color 0.15s ease; }
-body { background-color: var(--bg); color: var(--text); min-height: 100vh; }
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--text); min-height: 100dvh; font-family: system-ui, -apple-system, sans-serif; }
 
-/* ── Classes utilitárias de tema ─────────────────────────────────────────── */
-.t-bg      { background-color: var(--bg) !important; }
-.t-bg2     { background-color: var(--bg2) !important; }
-.t-card    { background-color: var(--card) !important; }
-.t-border  { border-color: var(--border) !important; }
-.t-text    { color: var(--text) !important; }
-.t-text2   { color: var(--text2) !important; }
-.t-text3   { color: var(--text3) !important; }
+/* ── Classes utilitárias ─────────────────────────────────────────────────── */
+.t-bg     { background-color: var(--bg) !important; }
+.t-bg2    { background-color: var(--bg2) !important; }
+.t-card   { background-color: var(--card) !important; }
+.t-border { border-color: var(--border) !important; }
+.t-text   { color: var(--text) !important; }
+.t-text2  { color: var(--text2) !important; }
+.t-text3  { color: var(--text3) !important; }
+.t-nav    { background-color: var(--nav) !important; border-color: var(--nav-b) !important; }
 .t-hover:hover { background-color: var(--hover) !important; }
-.t-nav     { background-color: var(--nav) !important; border-color: var(--nav-border) !important; }
-.t-input   {
-  background-color: var(--input-bg) !important;
+.t-link   { color: var(--text2) !important; }
+.t-link:hover { color: var(--text) !important; background-color: var(--hover) !important; }
+.t-input  {
+  background-color: var(--inp) !important;
   border: 1px solid var(--border) !important;
   color: var(--text) !important;
+  font-size: 16px !important;
 }
 .t-input::placeholder { color: var(--text3) !important; }
-.t-input:focus { border-color: #f97316 !important; outline: none !important; }
+.t-input:focus { border-color: #f97316 !important; outline: none !important; box-shadow: 0 0 0 3px rgba(249,115,22,0.15); }
+.t-input option { background: var(--card); color: var(--text); }
 
-/* Garante que selects e textareas herdem o tema */
-.t-input option { background-color: var(--card); color: var(--text); }
+/* ── Navbar mobile ───────────────────────────────────────────────────────── */
+.nav-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.nav-scroll::-webkit-scrollbar { display: none; }
 
-/* Link de navegação */
-.t-link    { color: var(--text2) !important; }
-.t-link:hover { color: var(--text) !important; background-color: var(--hover) !important; }
+/* ── Cards mobile ────────────────────────────────────────────────────────── */
+.card-hover { transition: border-color 0.15s, box-shadow 0.15s; }
+.card-hover:hover { border-color: #f97316 !important; box-shadow: var(--shadow); }
 
-/* Divisor */
-.t-divide > * + * { border-top: 1px solid var(--border); }
+/* ── Botões ──────────────────────────────────────────────────────────────── */
+.btn-primary {
+  background: #f97316;
+  color: white;
+  border-radius: 0.625rem;
+  font-weight: 500;
+  transition: background 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 44px;
+}
+.btn-primary:hover { background: #ea6c0a; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.5; }
+
+.btn-ghost {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 0.625rem;
+  transition: all 0.15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
+}
+.btn-ghost:hover { color: var(--text); background-color: var(--hover); }
+
+/* ── Scroll suave ────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+/* ── Animação fade-in ────────────────────────────────────────────────────── */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.animate-fade { animation: fadeIn 0.2s ease both; }
+
+/* ── Modal overlay ───────────────────────────────────────────────────────── */
+.modal-overlay { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
